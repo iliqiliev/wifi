@@ -59,6 +59,6 @@ if not (targets := len(smartcom_df)):
 
 print(f"[green]{targets} Smartcom network(s) out of {len(wifi_df)} Wi-Fi network(s).")
 
-for row in smartcom_df.to_dict(orient="records", into=dict[str, str]):
+for row in smartcom_df.to_dict(orient="records", into=dict[str, str]()):
     password = smartcom_password(row["BSSID"])
     print(f"{row['SSID']}: {password} ({row['BARS']})")
