@@ -1,0 +1,19 @@
+[project]
+name = "wifi-hacking"
+version = "0.1.0"
+readme = "README.md"
+requires-python = ">=3.14"
+
+dependencies = [
+    "pandas>=3.0.1",
+    "rich>=14.3.3",
+]
+
+[dependency-groups]
+dev = [
+    "basedpyright>=1.38.1",
+    "pandas-stubs>=3.0.0.260204",
+]
+
+[tool.basedpyright]
+typeCheckingMode = "recommended"
