@@ -1,12 +1,18 @@
 """https://sec.stanev.org/advisories/Smartcom_default_WPA_password.txt"""
 
+from argparse import ArgumentParser
 from hashlib import md5
 from io import BytesIO
 from subprocess import check_output
 from sys import stderr
+from typing import cast
 
 from pandas import read_fwf
 from rich import print
+
+args = ArgumentParser()
+_ = args.add_argument("bssid", nargs="?")
+bssid = cast(str, args.parse_args().bssid)
 
 BSSID_LEN = 12
 SERIAL_OFFSET = 4
@@ -41,6 +47,11 @@ def smartcom_password(bssid: str) -> str:
 
     return preimage_md5[:PASSWORD_LEN]
 
+
+if bssid:
+    password = smartcom_password(bssid)
+    print(f"{bssid}: {password}")
+    raise SystemExit(0)
 
 wifi_list = check_output("nmcli device wifi list", shell=True)
 wifi_df = read_fwf(BytesIO(wifi_list))
