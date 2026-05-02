@@ -1,7 +1,6 @@
 [project]
 name = "wifi"
 version = "0.1.0"
-readme = "README.md"
 requires-python = ">=3.14"
 
 dependencies = [
@@ -11,7 +10,6 @@ dependencies = [
 
 [dependency-groups]
 dev = [
-    "basedpyright>=1.38.1",
     "pandas-stubs>=3.0.0.260204",
 ]
 
