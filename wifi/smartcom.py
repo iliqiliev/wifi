@@ -11,7 +11,7 @@ from pandas import read_fwf
 from rich import print
 
 args = ArgumentParser()
-_ = args.add_argument("bssid", nargs="?")
+_ = args.add_argument("bssid", nargs="?", help="BSSID like A1:B2:C3:D4:E5:F6")
 bssid = cast(str, args.parse_args().bssid)
 
 BSSID_LEN = 12
@@ -52,6 +52,7 @@ if bssid:
     password = smartcom_password(bssid)
     print(f"{bssid}: {password}")
     raise SystemExit(0)
+
 
 wifi_list = check_output(("nmcli", "device", "wifi", "list"))
 if len(wifi_list) == 0:
