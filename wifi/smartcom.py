@@ -53,7 +53,7 @@ if bssid:
     print(f"{bssid}: {password}")
     raise SystemExit(0)
 
-wifi_list = check_output("nmcli device wifi list", shell=True)
+wifi_list = check_output(("nmcli", "device", "wifi", "list"))
 if len(wifi_list) == 0:
     print(
         "[red]No output from [i]NetworkManager[/i]."
