@@ -54,17 +54,26 @@ if bssid:
     raise SystemExit(0)
 
 wifi_list = check_output("nmcli device wifi list", shell=True)
+if len(wifi_list) == 0:
+    print(
+        "[red]No output from [i]NetworkManager[/i]."
+        + " Is there a wireless interaface available?",
+        file=stderr,
+    )
+    exit(1)
+
+
 wifi_df = read_fwf(BytesIO(wifi_list))
 wifi_df["BSSID"] = wifi_df["BSSID"].apply(normalize_bssid)
 
-if not (potential := len(wifi_df)):
+if not (potential_count := len(wifi_df)):
     print("[red]No Wi-Fi networks found. Check if Wi-Fi is enabled.", file=stderr)
     exit(1)
 
 smartcom_df = wifi_df[wifi_df["BSSID"].str.startswith(SMARTCOM_PREFIX)]
 
 if not (targets := len(smartcom_df)):
-    print(f"Found {potential} potential Wi-Fi networks.")
+    print(f"Found {potential_count} potential Wi-Fi networks.")
     print("[red]No Smartcom networks found.", file=stderr)
     exit(1)
 
