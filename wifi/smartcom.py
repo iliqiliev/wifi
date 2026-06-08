@@ -1,18 +1,24 @@
 """https://sec.stanev.org/advisories/Smartcom_default_WPA_password.txt"""
 
-from argparse import ArgumentParser
+from argparse import ArgumentParser, Namespace
+from dataclasses import dataclass
 from hashlib import md5
 from io import BytesIO
 from subprocess import check_output
-from sys import stderr
-from typing import cast
 
 from pandas import read_fwf
-from rich import print
+from rich import print as rprint
 
-args = ArgumentParser()
-_ = args.add_argument("bssid", nargs="?", help="BSSID like A1:B2:C3:D4:E5:F6")
-bssid = cast(str, args.parse_args().bssid)
+
+@dataclass
+class MyNamespace(Namespace):
+    bssid: str | None
+
+
+arg_parser = ArgumentParser()
+_ = arg_parser.add_argument("bssid", nargs="?", help="BSSID like A1:B2:C3:D4:E5:F6")
+args = arg_parser.parse_args(namespace=MyNamespace)
+
 
 BSSID_LEN = 12
 SERIAL_OFFSET = 4
@@ -48,19 +54,16 @@ def smartcom_password(bssid: str) -> str:
     return preimage_md5[:PASSWORD_LEN]
 
 
-if bssid:
-    password = smartcom_password(bssid)
-    print(f"{bssid}: {password}")
+if args.bssid:
+    password = smartcom_password(args.bssid)
+    rprint(f"{args.bssid}: {password}")
     raise SystemExit(0)
 
 
 wifi_list = check_output(("nmcli", "device", "wifi", "list"))
 if len(wifi_list) == 0:
-    print(
-        "[red]No output from [i]NetworkManager[/i]."
-        + " Is there a wireless interaface available?",
-        file=stderr,
-    )
+    rprint("[red]No output from [i]NetworkManager[/i].")
+    rprint("[red]Is there a wireless interface available?")
     exit(1)
 
 
@@ -68,18 +71,18 @@ wifi_df = read_fwf(BytesIO(wifi_list))
 wifi_df["BSSID"] = wifi_df["BSSID"].apply(normalize_bssid)
 
 if not (potential_count := len(wifi_df)):
-    print("[red]No Wi-Fi networks found. Check if Wi-Fi is enabled.", file=stderr)
+    rprint("[red]No Wi-Fi networks found. Check if Wi-Fi is enabled.")
     exit(1)
 
 smartcom_df = wifi_df[wifi_df["BSSID"].str.startswith(SMARTCOM_PREFIX)]
 
 if not (targets := len(smartcom_df)):
-    print(f"Found {potential_count} potential Wi-Fi networks.")
-    print("[red]No Smartcom networks found.", file=stderr)
+    rprint(f"Found {potential_count} potential Wi-Fi networks.")
+    rprint("[red]No Smartcom networks found.")
     exit(1)
 
-print(f"[green]{targets} Smartcom network(s) out of {len(wifi_df)} Wi-Fi network(s).")
+rprint(f"[green]{targets} Smartcom network(s) out of {len(wifi_df)} Wi-Fi network(s).")
 
 for row in smartcom_df.to_dict(orient="records", into=dict[str, str]()):
     password = smartcom_password(row["BSSID"])
-    print(f"{row['SSID']}: {password} ({row['BARS']})")
+    rprint(f"{row['SSID']}: {password} ({row['BARS']})")
