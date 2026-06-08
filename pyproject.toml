@@ -1,17 +1,18 @@
 [project]
 name = "wifi"
-version = "0.1.0"
+version = "0.1.1"
+readme = "README.md"
 requires-python = ">=3.14"
 
 dependencies = [
-    "pandas>=3.0.1",
-    "prompt-toolkit>=3.0.52",
-    "rich>=14.3.3",
+  "pandas>=3.0.3",
+  "prompt-toolkit>=3.0.52",
+  "rich>=15.0.0",
 ]
 
 [dependency-groups]
 dev = [
-    "pandas-stubs>=3.0.0.260204",
+  "pandas-stubs>=3.0.3.260530",
 ]
 
 [tool.basedpyright]
