@@ -60,7 +60,7 @@ if args.bssid:
     raise SystemExit(0)
 
 
-wifi_list = check_output(("nmcli", "device", "wifi", "list"))
+wifi_list = check_output("nmcli device wifi list".split())
 if len(wifi_list) == 0:
     rprint("[red]No output from [i]NetworkManager[/i].")
     rprint("[red]Is there a wireless interface available?")

@@ -9,9 +9,9 @@ from rich import print
 
 DEPENDENCIES = ["nmcli", "airmon-ng", "airodump-ng"]
 
-for dep in DEPENDENCIES:
-    if which(dep) is None:
-        print(f"[red][i]{dep}[/i] not found. Script cannot continue.")
+for dependency in DEPENDENCIES:
+    if which(dependency) is None:
+        print(f"[red][i]{dependency}[/i] not found. Script cannot continue.")
         exit(1)
 
 
